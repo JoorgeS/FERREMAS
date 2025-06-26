@@ -21,7 +21,7 @@ urlpatterns = [
     path('administrador/', views.administrador, name='administrador'),
     path('cuenta/', views.cuenta_usuario, name='cuenta'),
     path('panel-admin/productos/', views.admin_productos_view, name='productos_admin'),
-    path('panel-admin/productos/nuevo/', views.crear_producto, name='producto_nuevo'),
+    path('panel-admin/productos/editar/', views.crear_producto, name='producto_nuevo'),
     path('panel-admin/productos/editar/<int:producto_id>/', views.editar_producto, name='producto_editar'),
     path('panel-admin/productos/eliminar/<int:producto_id>/', views.eliminar_producto, name='producto_eliminar'),
     path('panel/perfiles/crear/', views.crear_perfil_manual, name='crear_perfil'),
@@ -29,7 +29,9 @@ urlpatterns = [
     path('panel/perfiles/eliminar/<int:pk>/', views.eliminar_perfil, name='eliminar_perfil'),
     path('bodeguero/', views.vista_bodeguero, name='vista_bodeguero'),
     path('cliente/', views.vista_cliente, name='vista_cliente'),
+    path('error/', views.redirect_with_error, name='redirect_with_error'),
     path('cliente/editar/', views.editar_perfil_cliente, name='editar_perfil_cliente'),
+    path('purchase/', views.purchase, name='purchase'),
 
 
 

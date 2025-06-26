@@ -9,21 +9,43 @@ from myapp.models import Product
 import random
 from django.contrib.auth.decorators import login_required
 from .models import Perfil, CartItem, Compra
-from .forms import PerfilForm, ProductForm
-
-# from transbank.webpay.webpay_plus.transaction import Transaction
-# from transbank.common.integration_type import IntegrationType
-# from django.shortcuts import render, redirect
-# from django.views.decorators.csrf import csrf_exempt
-
-# Transaction.commerce_code = '597055555532'
-# Transaction.api_key = 'X'
-# Transaction.integration_type = IntegrationType.TEST
-
-# tx = Transaction()  # sin argumentos
+from .forms import  ProductForm
+from django.shortcuts import render, redirect
+#TRANSBANK
+from transbank.webpay.webpay_plus.transaction import Transaction
+from transbank.common.integration_type import IntegrationType
 
 
 
+#Transbank
+def calcular_total_carrito(user):
+    cart_items = CartItem.objects.filter(user=user)
+    return sum(item.product.price * item.quantity for item in cart_items)
+
+@login_required
+def purchase(request):
+    if request.method == 'POST':
+        tx = Transaction.configure_for_testing()  # datos de prueba
+
+        buy_order = f"pedido-{request.user.id}-{CartItem.objects.count()}"
+        session_id = str(request.user.id)
+        amount = calcular_total_carrito(request.user)  # esta función debe retornar un número
+        return_url = request.build_absolute_uri('/pago/confirmacion/')
+
+        response = tx.create(buy_order, session_id, amount, return_url)
+
+        return redirect(f"{response['url']}?token_ws={response['token']}")
+
+    return redirect('view_cart')
+
+
+
+#Variable que redirige a un mensaje de error
+def redirect_with_error(request):
+    return render(request, 'error.html', {'mensaje': 'No se pudo agregar el producto al carrito.'})
+
+
+#Funcion que valida que el usuario esté conectado para mostrar el carrito
 def home(request):
     all_products = list(Product.objects.all())
     displayed_products = random.sample(all_products, 4)
@@ -94,7 +116,7 @@ def add_to_cart(request):
             cart_item.quantity += quantity
         cart_item.save()
 
-        return JsonResponse({'message': 'Producto añadido al carrito'})
+        return redirect('view_cart')
 
 
 
@@ -219,12 +241,11 @@ def crear_producto(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Producto creado correctamente.")
+            form.save()  # Aquí se guarda con un nuevo ID automáticamente
             return redirect('productos_admin')
     else:
         form = ProductForm()
-    return render(request, 'producto_form.html', {'form': form, 'accion': 'Crear'})
+    return render(request, 'producto_formulario.html', {'form': form, 'titulo': 'Crear Producto'})
 
 @login_required
 def editar_producto(request, producto_id):
@@ -238,11 +259,10 @@ def editar_producto(request, producto_id):
     else:
         form = ProductForm(instance=producto)
 
-    return render(request, 'producto_formulario (1).html', {
+    return render(request, 'producto_formulario.html', {
         'form': form,
         'accion': 'Editar'
     })
-
 
 @login_required
 def eliminar_producto(request, producto_id):
