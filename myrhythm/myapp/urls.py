@@ -4,6 +4,7 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
+from django.urls import include
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -31,10 +32,11 @@ urlpatterns = [
     path('cliente/', views.vista_cliente, name='vista_cliente'),
     path('error/', views.redirect_with_error, name='redirect_with_error'),
     path('cliente/editar/', views.editar_perfil_cliente, name='editar_perfil_cliente'),
+    path('pago/iniciar/', views.iniciar_pago, name='iniciar_pago'),
+    path('pago/confirmar/', views.confirmar_pago, name='confirmar_pago'),
     path('purchase/', views.purchase, name='purchase'),
-
-
-
+    path('purchase/commit/', views.purchase_commit, name='purchase_commit'),
+    path('auth/', include('social_django.urls', namespace='social')),
 
     
 ]

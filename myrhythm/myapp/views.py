@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.contrib.auth.models import User
 from .models import Product
 from django.contrib import messages
@@ -11,32 +11,115 @@ from django.contrib.auth.decorators import login_required
 from .models import Perfil, CartItem, Compra
 from .forms import  ProductForm
 from django.shortcuts import render, redirect
+import uuid
+
 #TRANSBANK
-from transbank.webpay.webpay_plus.transaction import Transaction
 from transbank.common.integration_type import IntegrationType
+from transbank.webpay.webpay_plus.transaction import Transaction, WebpayOptions, TransbankError
 
 
-
-#Transbank
+#Vista para Transbank
 def calcular_total_carrito(user):
     cart_items = CartItem.objects.filter(user=user)
     return sum(item.product.price * item.quantity for item in cart_items)
 
-@login_required
+#@login_required
+#def purchase(request):
+#    if request.method == 'POST':
+#        tx = Transaction.configure_for_testing()  # datos de prueba
+
+#        buy_order = f"pedido-{request.user.id}-{CartItem.objects.count()}"
+#       session_id = str(request.user.id)
+#        amount = calcular_total_carrito(request.user)  # esta función debe retornar un número
+#        return_url = request.build_absolute_uri('/pago/confirmacion/')
+#
+#       response = tx.create(buy_order, session_id, amount, return_url)
+
+#        return redirect(f"{response['url']}?token_ws={response['token']}")
+
+#    return redirect('view_cart')
+
 def purchase(request):
-    if request.method == 'POST':
-        tx = Transaction.configure_for_testing()  # datos de prueba
+    tx = Transaction(WebpayOptions(
+        commerce_code='597055555532',
+        api_key='579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
+        integration_type=IntegrationType.TEST
+    ))
 
-        buy_order = f"pedido-{request.user.id}-{CartItem.objects.count()}"
-        session_id = str(request.user.id)
-        amount = calcular_total_carrito(request.user)  # esta función debe retornar un número
-        return_url = request.build_absolute_uri('/pago/confirmacion/')
+    buy_order = str(uuid.uuid4())[:12]
+    session_id = str(uuid.uuid4())
+    amount = calcular_total_carrito(request.user)
+    return_url = request.build_absolute_uri('/purchase/commit/')
 
-        response = tx.create(buy_order, session_id, amount, return_url)
+    response = tx.create(buy_order, session_id, amount, return_url)
+    return redirect(response['url'] + '?token_ws=' + response['token'])
 
-        return redirect(f"{response['url']}?token_ws={response['token']}")
+def iniciar_pago(request):
+    total = calcular_total_carrito(request.user)
+    if total == 0:
+        return redirect('view_cart')
 
-    return redirect('view_cart')
+    tx = Transaction(WebpayOptions(
+        commerce_code='597055555532',
+        api_key='579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
+        integration_type=IntegrationType.TEST
+    ))
+
+    buy_order = str(uuid.uuid4())[:12]
+    session_id = str(request.user.id)
+    return_url = request.build_absolute_uri(reverse('confirmar_pago'))
+
+    response = tx.create(buy_order, session_id, total, return_url)
+
+    return redirect(response['url'] + '?token_ws=' + response['token'])
+
+def confirmar_pago(request):
+    token = request.GET.get('token_ws')
+
+    tx = Transaction(WebpayOptions(
+        commerce_code='597055555532',
+        api_key='579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
+        integration_type=IntegrationType.TEST
+    ))
+
+    response = tx.commit(token)
+
+    if response['status'] == 'AUTHORIZED':
+        # Aquí puedes vaciar el carrito o guardar la compra
+        CartItem.objects.filter(user=request.user).delete()
+        return render(request, 'pago_exitoso.html', {'respuesta': response})
+    else:
+        return render(request, 'pago_fallido.html', {'respuesta': response})
+
+def purchase_commit(request):
+    token = request.GET.get('token_ws')
+
+    if not token:
+        # Transbank cancela con parámetros TBK_TOKEN, TBK_ORDEN_COMPRA y TBK_ID_SESION si se anula el pago
+        if 'TBK_TOKEN' in request.GET:
+            messages.error(request, 'La transacción fue cancelada por el usuario.')
+            return redirect('view_cart')  # o donde prefieras llevar al usuario
+        else:
+            return HttpResponseBadRequest("Token inválido o no presente")
+
+    try:
+        tx = Transaction(WebpayOptions(
+            commerce_code='597055555532',
+            api_key='579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
+            integration_type=IntegrationType.TEST
+        ))
+        response = tx.commit(token)
+        # Aquí puedes registrar la compra y vaciar el carrito si todo sale bien
+        CartItem.objects.filter(user=request.user).delete()
+        messages.success(request, 'Pago realizado con éxito.')
+        return render(request, 'pago_exitoso.html')
+    except TransbankError as e:
+        messages.error(request, f'Ocurrió un error al confirmar el pago: {str(e)}')
+        return redirect('view_cart')
+
+
+
+
 
 
 
@@ -154,15 +237,6 @@ def update_cart(request):
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-
-@login_required
-def purchase(request):
-    if request.method == 'POST':
-        cart_items = CartItem.objects.filter(user=request.user)
-        cart_items.delete()
-        messages.success(request, 'Compra realizada con éxito.')
-        return JsonResponse({'message': 'Compra realizada con éxito.', 'redirect_url': reverse('home')})
-    return redirect('view_cart')
 
 
 @login_required
