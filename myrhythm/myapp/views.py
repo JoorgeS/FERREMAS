@@ -12,7 +12,7 @@ from .models import Perfil, CartItem, Compra
 from .forms import  ProductForm
 from django.shortcuts import render, redirect
 import uuid
-
+from .models import Pedido
 #TRANSBANK
 from transbank.common.integration_type import IntegrationType
 from transbank.webpay.webpay_plus.transaction import Transaction, WebpayOptions, TransbankError
@@ -109,8 +109,13 @@ def purchase_commit(request):
             integration_type=IntegrationType.TEST
         ))
         response = tx.commit(token)
+
+        # Crear el pedido
+        Pedido.objects.create(
+        user=request.user,
+        total=calcular_total_carrito(request.user),
+        estado='Pagado')
         # Aquí puedes registrar la compra y vaciar el carrito si todo sale bien
-        CartItem.objects.filter(user=request.user).delete()
         messages.success(request, 'Pago realizado con éxito.')
         return render(request, 'pago_exitoso.html')
     except TransbankError as e:
@@ -236,6 +241,8 @@ def update_cart(request):
         return JsonResponse({'message': 'Carrito actualizado'})
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
 
 
 
