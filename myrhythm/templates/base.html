@@ -94,6 +94,13 @@
                                     aria-controls="register-form" aria-selected="false">Crear cuenta</button>
                             </li>
                         </ul>
+
+                        <hr>
+                        <div class="text-center">
+                            <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}" class="btn btn-danger">
+                                <i class="fab fa-google"></i> Iniciar sesión con Google
+                            </a>
+                        </div>
     
                         <!-- Tab panes -->
                         <div class="tab-content mt-3" id="myTabContent">

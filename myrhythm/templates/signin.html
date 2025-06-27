@@ -24,6 +24,11 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
+        <div class="mt-3">
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-danger">
+            <i class="bi bi-google"></i> Iniciar sesión con Google
+             </a>
+        </div>
         <div class="form-container">
             <form action="#" method="post">
                 <label for="rut">RUT:</label>
