@@ -73,21 +73,31 @@
     </div>
 
     <div class="card">
-      <h4>Historial de Compras</h4>
-      {% if compras %}
-      <ul class="list-group">
-        {% for compra in compras %}
-        <li class="list-group-item">
-          <strong>{{ compra.fecha|date:"d/m/Y H:i" }}</strong> –
-          {{ compra.producto }} –
-          <span class="badge bg-primary">Cantidad: {{ compra.cantidad }}</span> –
-          Total: ${{ compra.total }}
-        </li>
+      <h3>Mis Compras</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pedido in pedidos %}
+        <tr>
+            <td>{{ pedido.id }}</td>
+            <td>{{ pedido.fecha }}</td>
+            <td>${{ pedido.total }}</td>
+            <td>{{ pedido.estado }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Aún no has realizado compras.</td>
+        </tr>
         {% endfor %}
-      </ul>
-      {% else %}
-      <p class="text-muted">No hay compras registradas.</p>
-      {% endif %}
+    </tbody>
+</table>
     </div>
   </div>
 </div>
