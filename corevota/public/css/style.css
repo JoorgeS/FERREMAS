@@ -1,0 +1,267 @@
+        
+
+    /*LOGIN*/
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(90deg, #f2f2f2, #c5c4c4);
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left img {
+            height: 40px;
+        }
+
+        .header-title {
+            font-weight: bold;
+        }
+
+        .header-user {
+            position: relative;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .dropdown-user {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: #fff;
+            border: 1px solid #ccc;
+            min-width: 160px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .dropdown-user a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .dropdown-user a:hover {
+            background: #f2f2f2;
+        }
+
+        /* LAYOUT */
+        .main {
+            display: flex;
+            flex: 1;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            border-right: 1px solid #ccc;
+            padding-top: 20px;
+        }
+
+        .menu-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #000;
+            background: #ddd;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .menu-btn:hover {
+            background: #bbb;
+        }
+
+        /* SUBMENU */
+        .submenu {
+            display: none;
+            background: #eee;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #000;
+            font-size: 14px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .submenu a:hover {
+            background: #ddd;
+        }
+
+        /* CONTENT */
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(90deg, #f2f2f2, #c5c4c4);
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left img {
+            height: 40px;
+        }
+
+        .header-title {
+            font-weight: bold;
+        }
+
+        .header-user {
+            position: relative;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .dropdown-user {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: #fff;
+            border: 1px solid #ccc;
+            min-width: 160px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .dropdown-user a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .dropdown-user a:hover {
+            background: #f2f2f2;
+        }
+
+        /* LAYOUT */
+        .main {
+            display: flex;
+            flex: 1;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            border-right: 1px solid #ccc;
+            padding-top: 20px;
+        }
+
+        .menu-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #000;
+            background: #ddd;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .menu-btn:hover {
+            background: #bbb;
+        }
+
+        /* SUBMENU */
+        .submenu {
+            display: none;
+            background: #eee;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #000;
+            font-size: 14px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .submenu a:hover {
+            background: #ddd;
+        }
+
+        /* CONTENT */
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+
+/*LOGIN */
+/* Fondo degradado gris */
+.login-body {
+    background: linear-gradient(135deg, #f0f0f0, #bfbfbf);
+    font-family: Arial, sans-serif;
+}
+
+/* Tarjeta de login */
+.login-card {
+    width: 350px;
+    background: #fff;
+    border-radius: 10px;
+}
+
+/* Labels */
+.login-card .form-label {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* Inputs */
+.login-card .form-control {
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* Botón */
+.login-card .btn-success {
+    background-color: #198754;
+    border: none;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
